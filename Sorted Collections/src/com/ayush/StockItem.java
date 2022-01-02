@@ -3,6 +3,7 @@ package com.ayush;
 public class StockItem implements Comparable<StockItem> {
     private final String name;
     private double price;
+    private int reserved;
     private int quantityStock;
 
     public StockItem(String name, double price) {
@@ -25,8 +26,12 @@ public class StockItem implements Comparable<StockItem> {
         return price;
     }
 
-    public int quantityInStock() {
-        return quantityStock;
+    public int availableQuantity() {
+        return quantityStock - reserved;
+    }
+
+    public int reservedInStock() {
+        return reserved;
     }
 
     public void setPrice(double price) {
@@ -40,6 +45,32 @@ public class StockItem implements Comparable<StockItem> {
         if (newQuantity >= 0) {
             this.quantityStock = newQuantity;
         }
+    }
+
+    public int reserveStock(int quantity) {
+        if (quantity <= availableQuantity()) // use the method not the field
+        {
+            reserved += quantity;
+            return quantity;
+        }
+        return 0;
+    }
+
+    public int unreserveStock(int quantity) {
+        if (quantity <= reserved) {
+            reserved -= quantity;
+            return quantity;
+        }
+        return 0;
+    }
+
+    public int finalizeStock(int quantity) {
+        if (quantity <= reserved) {
+            quantityStock -= quantity;
+            reserved -= quantity;
+            return quantity;
+        }
+        return 0;
     }
 
     @Override
@@ -64,7 +95,7 @@ public class StockItem implements Comparable<StockItem> {
 
     @Override
     public int compareTo(StockItem o) {
-        System.out.println("Entering StockItem.compareTo");
+//        System.out.println("Entering StockItem.compareTo");
         if (this == o) {
             return 0;
         }
@@ -76,6 +107,7 @@ public class StockItem implements Comparable<StockItem> {
 
     @Override
     public String toString() {
-        return this.name + " : price " + String.format("%.2f", this.price);
+        return this.name + " : price " + String.format("%.2f", this.price)
+                + ". Reserved " + this.reserved;
     }
 }

@@ -19,13 +19,35 @@ public class Basket {
         return 0;
     }
 
+    public int removeFromBasket(StockItem item, int quantity) {
+        if ((item != null) && (quantity > 0)) {
+            // check if we already have the item in the basket
+            int inBasket = list.getOrDefault(item, 0);
+            int newQuantity = inBasket - quantity;
+
+            if (newQuantity > 0) {
+                list.put(item, newQuantity);
+                return quantity;
+            } else if (newQuantity == 0) {
+                list.remove(item);
+                return quantity;
+            }
+        }
+        return 0;
+    }
+
+    public void clearBasket() {
+        this.list.clear();
+    }
+
     public Map<StockItem, Integer> Items() {
         return Collections.unmodifiableMap(list);
     }
 
     @Override
     public String toString() {
-        String s = "\nShopping basket " + name + " contains " + list.size() + ((list.size() == 1) ? " item\n" : " items\n");
+        String s = "\nShopping basket " + name + " contains " + list.size() +
+                ((list.size() == 1) ? " item\n" : " items\n");
         double totalCost = 0.0;
         for (Map.Entry<StockItem, Integer> item : list.entrySet()) {
             s = s + item.getKey() + ". " + item.getValue() + " purchased\n";
